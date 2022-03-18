@@ -16,19 +16,38 @@ public class Main {
             }
             String info = input.substring(input.indexOf(" ") + 1);
             if (choice.equals("install-drive")){
-                System.out.println(v.installDrive(info.substring(0, info.indexOf(" ")), info.substring(info.indexOf(" ") + 1)));
+                String name = info.substring(0, info.indexOf(" "));
+                String size = info.substring(info.indexOf(" ") + 1);
+                System.out.println(v.installDrive(name, size));
             } else if (choice.equals("list-drives")){
                 System.out.println(v.listDrives());
             } else if (choice.equals("pvcreate")){
-                System.out.println(v.pvCreate(info.substring(0, info.indexOf(" ")), info.substring(info.indexOf(" ") + 1)));
+                String name = info.substring(0, info.indexOf(" "));
+                String physicalHardDriveName = info.substring(info.indexOf(" ") + 1);
+                System.out.println(v.pvCreate(name, physicalHardDriveName));
             } else if (choice.equals("pvlist")){
                 System.out.println(v.pvlist());
             } else if (choice.equals("vgcreate")){
-                System.out.println(v.vgCreate(info.substring(0, info.indexOf(" ")), info.substring(info.indexOf(" ") + 1)));
+                String name = info.substring(0, info.indexOf(" "));
+                String physicalHardDriveName = info.substring(info.indexOf(" ") + 1);
+                System.out.println(v.vgCreate(name, physicalHardDriveName));
             } else if (choice.equals("vgextend")){
-                System.out.println(v.vgextend(info.substring(0, info.indexOf(" ")), info.substring(info.indexOf(" ") + 1)));
+                String vgName = info.substring(0, info.indexOf(" "));
+                String physicalVolumeName = info.substring(info.indexOf(" ") + 1);
+                System.out.println(v.vgextend(vgName, physicalVolumeName));
             } else if (choice.equals("vglist")){
                 System.out.println(v.vglist());
+            } else if (choice.equals("lvcreate")){
+                String name = info.substring(0, info.indexOf(" "));
+                info = info.substring(info.indexOf(" ") + 1);
+                String size = info.substring(0, info.indexOf(" "));
+                String volumeGroupName = info.substring(info.indexOf(" ") + 1);
+                System.out.println(v.lvcreate(name, size, volumeGroupName));
+            } else if (choice.equals("lvlist")){
+                System.out.println(v.lvlist());
+            } else if (choice.equals("exit")){
+                System.out.println("Saving data. Good-bye!");
+                quit = true;
             }
         }
 

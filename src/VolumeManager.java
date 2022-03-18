@@ -4,17 +4,25 @@ import java.util.UUID;
 
 public class VolumeManager {
     private String name;
+    private String uuid;
     private static ArrayList<PhysicalHardDrive> physicalHardDriveArrayList = new ArrayList<PhysicalHardDrive>();
     private static ArrayList<PhysicalVolume> physicalVolumeArrayList = new ArrayList<PhysicalVolume>();
     private static ArrayList<VolumeGroup> volumeGroupArrayList = new ArrayList<VolumeGroup>();
+    private static ArrayList<LogicalVolume> logicalVolumeArrayList = new ArrayList<LogicalVolume>();
 
     public VolumeManager(String name){
         this.name = name;
+        uuid = generateUUID();
     }
 
     public String getName() {
         return name;
     }
+
+    public String getUuid() {
+        return uuid;
+    }
+
     public String generateUUID(){
         UUID u = UUID.randomUUID();
         return u.toString();
@@ -111,6 +119,29 @@ public class VolumeManager {
         String str = "";
         for (int i = 0; i < volumeGroupArrayList.size(); i++){
             str += volumeGroupArrayList.get(i).toString() + "\n";
+        }
+        return str;
+    }
+    public String lvcreate(String lvName, String size, String vgName){
+        VolumeGroup vg = findVolumeGroup(vgName);
+        int intSize = Integer.valueOf(size.substring(0, size.indexOf("G")));
+        //IMPORTANT: CHECK IF THIS WORKS
+        System.out.println(intSize);
+        System.out.println(vg.getAvailable());
+        if (intSize <= vg.getAvailable()){
+            LogicalVolume lv = new LogicalVolume(lvName, size, vgName);
+            lv.setVolumeGroup(vg);
+            vg.addLogicalVolumeTovg(lv);
+            logicalVolumeArrayList.add(lv);
+            return lvName + " created";
+        } else {
+            return vgName + " does not have enough space";
+        }
+    }
+    public String lvlist(){
+        String str = "";
+        for (int i = 0; i < logicalVolumeArrayList.size(); i++){
+            str += logicalVolumeArrayList.get(i).toString() + "\n";
         }
         return str;
     }
