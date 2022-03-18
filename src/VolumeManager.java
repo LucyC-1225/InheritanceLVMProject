@@ -52,7 +52,7 @@ public class VolumeManager {
     public void addVolumeGroup(VolumeGroup v){
         volumeGroupArrayList.add(v);
     }
-    //commands
+    //commands - idea: maybe put all this in another Command class?
     public String installDrive(String name, String size){
         /*
         - prevent users from entering the same name
