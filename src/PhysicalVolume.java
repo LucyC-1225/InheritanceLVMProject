@@ -1,6 +1,7 @@
 public class PhysicalVolume extends VolumeManager{
     PhysicalHardDrive physicalHardDrive;
     String uuid;
+    VolumeGroup volumeGroup;
 
     public PhysicalVolume(String name, String physicalHardDriveName){
         super(name);
@@ -15,8 +16,19 @@ public class PhysicalVolume extends VolumeManager{
     public String getUuid() {
         return uuid;
     }
-    //FINISH THIS
+    public void setVolumeGroup(VolumeGroup volumeGroup){
+        this.volumeGroup = volumeGroup;
+    }
+    public VolumeGroup getVolumeGroup(){
+        return volumeGroup;
+    }
+
     public String toString(){
-        return getName() + ": [" + physicalHardDrive.getSize() + "] ";
+        String str = getName() + ": [" + physicalHardDrive.getSize() + "] ";
+        if (volumeGroup != null){
+            str += "[" + volumeGroup.getName() + "] ";
+        }
+        str += "[" + uuid + "]";
+        return str;
     }
 }
