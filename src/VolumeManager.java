@@ -1,10 +1,15 @@
+import java.io.File;
+import java.io.PrintWriter;
 import java.text.CollationElementIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class VolumeManager {
     private String name;
     private String uuid;
+    //save  the data of all the objects here
     private static ArrayList<PhysicalHardDrive> physicalHardDriveArrayList = new ArrayList<PhysicalHardDrive>();
     private static ArrayList<PhysicalVolume> physicalVolumeArrayList = new ArrayList<PhysicalVolume>();
     private static ArrayList<VolumeGroup> volumeGroupArrayList = new ArrayList<VolumeGroup>();
@@ -21,6 +26,14 @@ public class VolumeManager {
 
     public String getUuid() {
         return uuid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String generateUUID(){
@@ -60,7 +73,7 @@ public class VolumeManager {
     public void addVolumeGroup(VolumeGroup v){
         volumeGroupArrayList.add(v);
     }
-    //commands - idea: maybe put all this in another Command class?
+    //-------------------------------Commands-----------------------------------
     public String installDrive(String name, String size){
         /*
         - prevent users from entering the same name
@@ -77,11 +90,6 @@ public class VolumeManager {
         return str;
     }
     public String pvCreate(String name, String physicalHardDriveName){
-        /*
-        - prevent users from entering the same name as an existing pv
-        - prevent users from entering a physicalHardDriveName that is already associated with a pv
-        - prevent users from entering a physicalHardDriveName that does not exist
-         */
         PhysicalVolume pv = new PhysicalVolume(name, physicalHardDriveName);
         addPhysicalVolume(pv);
         findHardDrive(physicalHardDriveName).setPhysicalVolume(pv); //sets the hard drive to an associated physical volume
@@ -95,22 +103,12 @@ public class VolumeManager {
         return str;
     }
     public String vgCreate(String name, String physicalVolumeName){
-        /*
-        - prevent users from entering the same name as an existing vg
-        - prevent users from entering a physical volume that is already associated with a vg
-        - prevent users from entering a physical volume that does not exist
-         */
         VolumeGroup vg = new VolumeGroup(name, physicalVolumeName);
         addVolumeGroup(vg);
         findPhysicalVolume(physicalVolumeName).setVolumeGroup(vg); //sets the physical volume to an associated volume group
         return name + " created\n";
     }
     public String vgextend(String vgname, String physicalVolumeName){
-        /*
-        - prevent users from entering a physical volume that is already associated with a volume group
-        - prevents the users from entering a physical volume that does not exist
-        - prevents the user from entering a volume group that does not exist
-         */
         findVolumeGroup(vgname).addPhysicalVolumeTovg(findPhysicalVolume(physicalVolumeName)); //be careful of which pv list im adding to
         findPhysicalVolume(physicalVolumeName).setVolumeGroup(findVolumeGroup(vgname));
         return physicalVolumeName + " added to " + vgname + "\n";
@@ -143,7 +141,7 @@ public class VolumeManager {
         }
         return str;
     }
-    //user input checks
+    //-------------------------------user input checks----------------------------------
     public boolean hardDriveAlreadyExist(String name){
         for (PhysicalHardDrive p : physicalHardDriveArrayList){
             if (p.getName().equals(name)){
@@ -214,12 +212,169 @@ public class VolumeManager {
         }
         return false;
     }
-    public boolean volumeGroupAlreadyExist(String name){
+    //-------------------------------saving and retrieving data-------------------------------
+    public String getAllSavedData(){
+        String str = "";
+        str += physicalHardDriveArrayList.size() + "\n";
+        for (PhysicalHardDrive p : physicalHardDriveArrayList){
+            str += p.dataInfo() + "\n";
+        }
+        str += physicalVolumeArrayList.size() + "\n";
+        for (PhysicalVolume p : physicalVolumeArrayList){
+            str += p.dataInfo() + "\n";
+        }
+        str += volumeGroupArrayList.size() + "\n";
         for (VolumeGroup v : volumeGroupArrayList){
-            if (v.getName().equals(name)){
-                return true;
+            str += v.dataInfo() + "\n";
+        }
+        str += logicalVolumeArrayList.size() + "\n";
+        for (LogicalVolume l : logicalVolumeArrayList){
+            str += l.dataInfo() + "\n";
+        }
+        return str;
+    }
+    public void saveData(){
+        String data = getAllSavedData();
+        try {
+            PrintWriter pw = new PrintWriter("savedData.txt");
+
+            pw.print(data);
+            pw.close();
+        }
+        catch(Exception e) {
+            e.getStackTrace();
+        }
+    }
+    public void clearData() throws Exception{
+        File file = new File("savedData.txt");
+        PrintWriter writer = new PrintWriter(file);
+        writer.print("");
+        writer.close();
+    }
+    public boolean isDataFileEmpty(){
+        File file = new File("savedData.txt");
+        return file.length() == 0;
+    }
+    public void retrieveData() throws Exception{
+        File file = new File("savedData.txt");
+        Scanner sc = new Scanner(file);
+        //retrieving data for physical hard drive
+        String[] physicalHardDriveData = new String[Integer.valueOf(sc.nextLine())];
+        int counter = 0;
+        String str = sc.nextLine();
+        while(!isInteger(str))
+        {
+            physicalHardDriveData[counter] = str;
+            counter++;
+            str = sc.nextLine();
+        }
+        //retrieving data for physical volume
+        String[] physicalVolumeData = new String[Integer.valueOf(str)];
+        counter = 0;
+        str = sc.nextLine();
+        while(!isInteger(str))
+        {
+            physicalVolumeData[counter] = str;
+            counter++;
+            str = sc.nextLine();
+        }
+        //retrieving data for volume group
+        String[] volumeGroupData = new String[Integer.valueOf(str)];
+        counter = 0;
+        str = sc.nextLine();
+        while(!isInteger(str))
+        {
+            volumeGroupData[counter] = str;
+            counter++;
+            str = sc.nextLine();
+        }
+        //retrieving data for logical volume
+        String[] logicalVolumeData = new String[Integer.valueOf(str)];
+        counter = 0;
+        while(sc.hasNextLine())
+        {
+            logicalVolumeData[counter] = sc.nextLine();
+            counter++;
+        }
+//        System.out.println("Physical HardDrive Data:");
+//        System.out.println(Arrays.toString(physicalHardDriveData));
+//        System.out.println("Physical volume Data:");
+//        System.out.println(Arrays.toString(physicalVolumeData));
+//        System.out.println("Volume Group Data:");
+//        System.out.println(Arrays.toString(volumeGroupData));
+//        System.out.println("Logical Volume Data:");
+//        System.out.println(Arrays.toString(logicalVolumeData));
+        //setting physical hardDrive objects (name only first)
+
+        for (String s : physicalHardDriveData){
+            String name = s.substring(0, s.indexOf(";"));
+            s = s.substring(s.indexOf(";") + 1);
+            String size = s.substring(0, s.indexOf(";"));
+            String pvname = s.substring(s.indexOf(";") + 1);
+            PhysicalHardDrive p = new PhysicalHardDrive(name, size);
+            p.setPhysicaVolumeName(pvname);
+            physicalHardDriveArrayList.add(p);
+        }
+        for (String s : physicalVolumeData){
+            String name = s.substring(0, s.indexOf(";"));
+            s = s.substring(s.indexOf(";") + 1);
+            String uuid = s.substring(0, s.indexOf(";"));
+            s = s.substring(s.indexOf(";") + 1);
+            String physicalHardDriveName = s.substring(0, s.indexOf(";"));
+            String vgname = s.substring(s.indexOf(";") + 1);
+            PhysicalVolume p = new PhysicalVolume(name, physicalHardDriveName);
+            p.setName(name);
+            p.setUuid(uuid);
+            p.setVolumeGroupName(vgname);
+            physicalVolumeArrayList.add(p);
+        }
+        //now that physical volume objects are created, the PhysicalVolume instance variable in physicalHardDrive can be set
+        for (PhysicalHardDrive p : physicalHardDriveArrayList){
+            if (!p.getPhysicaVolumeName().equals("")){
+                p.setPhysicalVolume(findPhysicalVolume(p.getPhysicaVolumeName()));
             }
         }
-        return false;
+        for (String s : volumeGroupData){
+            String name = s.substring(0, s.indexOf(";"));
+            String uuid = s.substring(s.indexOf(";") + 1);
+            VolumeGroup vg = new VolumeGroup(name);
+            vg.setUuid(uuid);
+            volumeGroupArrayList.add(vg);
+        }
+        //now that volume group objects are created, the volumeGroup instance variable in physicalVolume can be set
+        for (PhysicalVolume p : physicalVolumeArrayList){
+            if (!p.getVolumeGroupName().equals("")){
+                p.setVolumeGroup(findVolumeGroup(p.getVolumeGroupName()));
+            }
+        }
+        //now that physicalVolume actually has a volumeGroup object, we can set the physicalvolume arrayList in volumeGroup
+        for (VolumeGroup v : volumeGroupArrayList){
+            for (PhysicalVolume p : physicalVolumeArrayList){
+                if (v.getName().equals(p.getVolumeGroupName())){
+                    v.addPhysicalVolumeTovg(p);
+                }
+            }
+        }
+        for (String s : logicalVolumeData){
+            String name = s.substring(0, s.indexOf(";"));
+            s = s.substring(s.indexOf(";") + 1);
+            String uuid = s.substring(0, s.indexOf(";"));
+            s = s.substring(s.indexOf(";") + 1);
+            String size = s.substring(0, s.indexOf(";"));
+            String vgname = s.substring(s.indexOf(";") + 1);
+            LogicalVolume l = new LogicalVolume(name, size, vgname);
+            findVolumeGroup(vgname).addLogicalVolumeTovg(l);
+            logicalVolumeArrayList.add(l);
+        }
+    }
+    private static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch(NumberFormatException e) {
+            return false;
+        } catch(NullPointerException e) {
+            return false;
+        }
+        return true;
     }
 }

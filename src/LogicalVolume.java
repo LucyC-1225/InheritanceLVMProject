@@ -1,6 +1,6 @@
 public class LogicalVolume extends VolumeManager{
-    String size;
-    VolumeGroup volumeGroup;
+    private String size;
+    private VolumeGroup volumeGroup;
 
     public LogicalVolume(String name, String size, String volumeGroupName){
         super(name);
@@ -20,5 +20,9 @@ public class LogicalVolume extends VolumeManager{
     public String toString(){
         String str = getName() + ": [" + size + "] [" + volumeGroup.getName() + "] [" + getUuid() + "]";
         return str;
+    }
+
+    public String dataInfo(){
+        return getName() + ";" + getUuid() + ";" + getSize() + ";" + getVolumeGroup().getName();
     }
 }

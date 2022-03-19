@@ -1,10 +1,36 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         VolumeManager v = new VolumeManager("Volume Manager");
         Scanner sc = new Scanner(System.in);
         boolean quit = false;
+        boolean exitLoop = false;
+        if (!v.isDataFileEmpty()){
+            while (!exitLoop){
+                System.out.print("Would you like to retrieve previous data? (y/n) ");
+                String answer = sc.nextLine();
+                if (answer.equalsIgnoreCase("y")){
+                    v.retrieveData();
+                    exitLoop = true;
+                } else if (answer.equalsIgnoreCase("n")){
+                    System.out.print("Are you sure? This action will cause all previous data to be deleted. (y/n) ");
+                    answer = sc.nextLine();
+                    if (answer.equalsIgnoreCase("y")){
+                        v.clearData();
+                        exitLoop = true;
+                    }
+                } else {
+                    System.out.println("Invalid answer");
+                }
+            }
+        }
+
+        System.out.println("Welcome to the LVM system! Enter your commands:");
+        System.out.println();
         while (!quit){
             System.out.print("cmd# ");
             String input = sc.nextLine();
@@ -131,8 +157,8 @@ public class Main {
             } else if (choice.equals("lvlist")){
                 System.out.println(v.lvlist());
             } else if (choice.equals("exit")){
-                System.out.println("Saving data. Good-bye!");
-                System.out.println();
+                System.out.println("Saving data.... Good-bye!");
+                v.saveData();
                 quit = true;
             } else {
                 System.out.println("Invalid command");
