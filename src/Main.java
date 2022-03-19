@@ -16,55 +16,139 @@ public class Main {
             }
             String info = input.substring(input.indexOf(" ") + 1);
             if (choice.equals("install-drive")){
-                String name = info.substring(0, info.indexOf(" "));
-                String size = info.substring(info.indexOf(" ") + 1);
-                System.out.println(v.installDrive(name, size));
+                if (countDelimiters(info) == 1){
+                    String name = info.substring(0, info.indexOf(" "));
+                    String size = info.substring(info.indexOf(" ") + 1);
+                    if (!v.hardDriveAlreadyExist(name)){
+                        System.out.println(v.installDrive(name, size));
+                    } else {
+                        System.out.println("Drive " + name + " already exists");
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("Invalid format. Expected format: install-drive [drive_name] [size]");
+                    System.out.println();
+                }
             } else if (choice.equals("list-drives")){
                 System.out.println(v.listDrives());
             } else if (choice.equals("pvcreate")){
-                String name = info.substring(0, info.indexOf(" "));
-                String physicalHardDriveName = info.substring(info.indexOf(" ") + 1);
-                System.out.println(v.pvCreate(name, physicalHardDriveName));
+                if (countDelimiters(info) == 1){
+                    String name = info.substring(0, info.indexOf(" "));
+                    if (!v.pvAlreadyExist(name)){
+                        String physicalHardDriveName = info.substring(info.indexOf(" ") + 1);
+                        if (!v.hardDriveDoesNotExist(physicalHardDriveName)){
+                            if (!v.hardDriveAlreadyAssociated(physicalHardDriveName)){
+                                System.out.println(v.pvCreate(name, physicalHardDriveName));
+                            } else {
+                                System.out.println(physicalHardDriveName + " is already associated with a physical volume");
+                                System.out.println();
+                            }
+                        } else {
+                            System.out.println("Drive " + physicalHardDriveName + " does not exist");
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("Physical volume " + name + " already exists");
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("Invalid format. Expected format: pvcreate [pv_name] [drive_name]");
+                    System.out.println();
+                }
             } else if (choice.equals("pvlist")){
                 System.out.println(v.pvlist());
             } else if (choice.equals("vgcreate")){
-                String name = info.substring(0, info.indexOf(" "));
-                String physicalHardDriveName = info.substring(info.indexOf(" ") + 1);
-                System.out.println(v.vgCreate(name, physicalHardDriveName));
+                if (countDelimiters(info) == 1){
+                    String name = info.substring(0, info.indexOf(" "));
+                    if (!v.vgAlreadyExist(name)){
+                        String physicalVolumeName = info.substring(info.indexOf(" ") + 1);
+                        if (!v.physicalVolumeDoesNotExist(physicalVolumeName)){
+                            if (!v.physicalVolumeAlreadyAssociated(physicalVolumeName)){
+                                System.out.println(v.vgCreate(name, physicalVolumeName));
+                            } else {
+                                System.out.println("Physical volume " + physicalVolumeName + " is already associated with a volume group");
+                                System.out.println();
+                            }
+                        } else {
+                            System.out.println("Physical volume " + physicalVolumeName + " does not exist");
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("Volume group " + name + " already exists");
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("Invalid format. Expected format: vgcreate [vg_name] [pv_name]");
+                    System.out.println();
+                }
             } else if (choice.equals("vgextend")){
-                String vgName = info.substring(0, info.indexOf(" "));
-                String physicalVolumeName = info.substring(info.indexOf(" ") + 1);
-                System.out.println(v.vgextend(vgName, physicalVolumeName));
+                if (countDelimiters(info) == 1){
+                    String vgName = info.substring(0, info.indexOf(" "));
+                    if (!v.volumeGroupDoesNotExist(vgName)){
+                        String physicalVolumeName = info.substring(info.indexOf(" ") + 1);
+                        if (!v.physicalVolumeDoesNotExist(physicalVolumeName)){
+                            if (!v.physicalVolumeAlreadyAssociated(physicalVolumeName)){
+                                System.out.println(v.vgextend(vgName, physicalVolumeName));
+                            } else {
+                                System.out.println("Physical volume " + physicalVolumeName + " is already associated with a volume group");
+                                System.out.println();
+                            }
+                        } else {
+                            System.out.println("Physical volume " + physicalVolumeName + " does not exist");
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("Volume group " + vgName + " does not exist");
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("Invalid format. Expected format: vgextend [vg_name] [pv_name]");
+                    System.out.println();
+                }
             } else if (choice.equals("vglist")){
                 System.out.println(v.vglist());
             } else if (choice.equals("lvcreate")){
-                String name = info.substring(0, info.indexOf(" "));
-                info = info.substring(info.indexOf(" ") + 1);
-                String size = info.substring(0, info.indexOf(" "));
-                String volumeGroupName = info.substring(info.indexOf(" ") + 1);
-                System.out.println(v.lvcreate(name, size, volumeGroupName));
+                if (countDelimiters(info) == 2){
+                    String name = info.substring(0, info.indexOf(" "));
+                    if (!v.logicalVolumeAlreadyExists(name)){
+                        info = info.substring(info.indexOf(" ") + 1);
+                        String size = info.substring(0, info.indexOf(" "));
+                        String volumeGroupName = info.substring(info.indexOf(" ") + 1);
+                        if (!v.volumeGroupDoesNotExist(volumeGroupName)){
+                            System.out.println(v.lvcreate(name, size, volumeGroupName));
+                        } else {
+                            System.out.println("Volume group " + volumeGroupName + " does not exist");
+                            System.out.println();
+                        }
+                    } else {
+                        System.out.println("Logical volume " + name + " already exists");
+                        System.out.println();
+                    }
+                } else {
+                    System.out.println("Invalid format. Expected format: lvcreate [lv_name] [size] [vg_name]");
+                    System.out.println();
+                }
             } else if (choice.equals("lvlist")){
                 System.out.println(v.lvlist());
             } else if (choice.equals("exit")){
                 System.out.println("Saving data. Good-bye!");
+                System.out.println();
                 quit = true;
+            } else {
+                System.out.println("Invalid command");
+                System.out.println();
             }
         }
-
+    }
+    public static int countDelimiters(String info){
+        int countDelimiters = 0;
+        String temp = info;
+        int index = temp.indexOf(" ");
+        while (index != -1){
+            countDelimiters++;
+            temp = temp.substring(index + 1);
+            index = temp.indexOf(" ");
+        }
+        return countDelimiters;
     }
 }
-/*
-        //create volume manager
-        VolumeManager v = new VolumeManager("Volume Manager");
-        //whenever you create a physical hard drive, you have to add it to volume manager
-        PhysicalHardDrive sda = new PhysicalHardDrive("SDA1", "100G");
-        v.addPhysicalHardDrive(sda);
-        //whenever you create a physical volume, you have to add it to volume manager
-        PhysicalVolume pv = new PhysicalVolume("PV1", "SDA1");
-        v.addPhysicalVolume(pv);
-        //whenever you create a volume group, you have to add it to volume manager
-        //whenever you create a volume group or add (extend) a physical volume to the volume group, you have to call the setVolumeGroup method on the physical volume object
-        VolumeGroup vg = new VolumeGroup("VG1", "PV1");
-        v.addVolumeGroup(vg);
-        v.findPhysicalVolume("PV1").setVolumeGroup(vg);
- */

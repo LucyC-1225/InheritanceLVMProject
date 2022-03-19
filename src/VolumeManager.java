@@ -125,17 +125,15 @@ public class VolumeManager {
     public String lvcreate(String lvName, String size, String vgName){
         VolumeGroup vg = findVolumeGroup(vgName);
         int intSize = Integer.valueOf(size.substring(0, size.indexOf("G")));
-        //IMPORTANT: CHECK IF THIS WORKS
-        System.out.println(intSize);
-        System.out.println(vg.getAvailable());
+
         if (intSize <= vg.getAvailable()){
             LogicalVolume lv = new LogicalVolume(lvName, size, vgName);
             lv.setVolumeGroup(vg);
             vg.addLogicalVolumeTovg(lv);
             logicalVolumeArrayList.add(lv);
-            return lvName + " created";
+            return lvName + " created\n";
         } else {
-            return vgName + " does not have enough space";
+            return vgName + " does not have enough space\n";
         }
     }
     public String lvlist(){
@@ -144,5 +142,84 @@ public class VolumeManager {
             str += logicalVolumeArrayList.get(i).toString() + "\n";
         }
         return str;
+    }
+    //user input checks
+    public boolean hardDriveAlreadyExist(String name){
+        for (PhysicalHardDrive p : physicalHardDriveArrayList){
+            if (p.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean pvAlreadyExist(String name){
+        for (PhysicalVolume p : physicalVolumeArrayList){
+            if (p.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean hardDriveDoesNotExist(String hardDriveName){
+        for (PhysicalHardDrive p : physicalHardDriveArrayList){
+            if (p.getName().equals(hardDriveName)){
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean hardDriveAlreadyAssociated(String hardDriveName){
+        for (PhysicalVolume p : physicalVolumeArrayList){
+            if (p.getPhysicalHardDrive().getName().equals(hardDriveName)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean vgAlreadyExist(String name){
+        for (VolumeGroup v : volumeGroupArrayList){
+            if (v.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean physicalVolumeDoesNotExist(String name){
+        for (PhysicalVolume p : physicalVolumeArrayList){
+            if (p.getName().equals(name)){
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean physicalVolumeAlreadyAssociated(String name){
+        if (findPhysicalVolume(name).getVolumeGroup() == null){
+            return false;
+        }
+        return true;
+    }
+    public boolean volumeGroupDoesNotExist(String name){
+        for (VolumeGroup v : volumeGroupArrayList){
+            if (v.getName().equals(name)){
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean logicalVolumeAlreadyExists(String name){
+        for (LogicalVolume l : logicalVolumeArrayList){
+            if (l.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean volumeGroupAlreadyExist(String name){
+        for (VolumeGroup v : volumeGroupArrayList){
+            if (v.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 }
