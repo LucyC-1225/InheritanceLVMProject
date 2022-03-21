@@ -1,5 +1,9 @@
 1
-cva;100G;null
-0
-0
-0
+cva;100G;pv
+1
+pv;982aee0a-e7bf-4007-98d5-448b59f83d85;cva;vg
+1
+vg;83bdddc9-bffa-4de3-8512-420aa0be7bb0
+2
+lv;4e176f03-49ce-4fdf-9a33-034be6440d14;10G;vg
+lv1;67dd2020-82a6-45e8-a7e8-52a6f389d3a7;20G;vg

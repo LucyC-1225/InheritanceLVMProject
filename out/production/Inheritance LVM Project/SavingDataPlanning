@@ -1,0 +1,36 @@
+physicalHardDriveInfo
+name;size;physicalVolumeName //first put the name and then set the actual physical volume object by finding it later when retrieving data
+
+//maybe I need to create more instance variables for the names b/c I need to set the names first and create all the objects
+//before I set the actual physical volume object to physicalHardDrive for example
+physicalVolumeInfo
+name;uuid;physicalHardriveName;volumeGroupName
+
+volumeGroupInfo
+name;uuid
+
+logicalVolumeInfo
+name;uuid;size;volumeGroupName
+
+Saving data
+1) Add a dataInfo method for each class that returns a String with all of its instance variable info in the format above
+2) Add the number of physical hardDrives to the savedData file
+3) Add each physical hardDrive data to the savedData file
+4) add the number of physical volumes to the savedData file
+5) Add each physical volume data to the savedData file
+6) Add the number of volume groups to the savedData file
+7) Add each physical volume group to the savedData file
+8) Add the number of logical volumes to the savedData file
+9) Add each logical volume data to the savedData file
+
+Retrieving data
+- read from file and put in 4 arrayList the Strings of the info for each object
+1) Set all physical hardDrives with name only and add each to the physicalHardDriveArrayList in the volumeManager
+2) Set all physical volumes with name only and add each to the physicalVolumeArrayList in the volumeManager
+3) Set all volume group with name only and add each to the VolumeGroupArrayList in the volumeManager
+4) Set all logical volumes with name only
+5) Find and set the physical volume object to the physical hardDrives
+6) Find and set the physical hardDrive object and the volumeGroup object to physicalVolume
+7) Find and set the volumeGroup object to logicalVolume
+8) FInd and add all physicalVolumes associated with each volumeGroup to the arraylist
+9) FInd and add all logicalVolumes associated with each volumeGroup to the arraylist
