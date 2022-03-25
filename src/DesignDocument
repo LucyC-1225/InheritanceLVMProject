@@ -1,7 +1,90 @@
-PhysicalHardDrive is a subclass of the superclass VolumeManager
-PhysicalVolume is a subclass of the superclass VolumeManager
-VolumeGroup is a subclass of the superclass VolumeManager
-PhysicalVolume has a PhysicalHardDrive and a PhysicalHardDrive has a PhysicalVolume
-VolumeGroup has multiple PhysicalVolume and a PhysicalVolume has a VolumeGroup
-Volume
-wer
+Is-a and has-a relationships:
+- PhysicalVolume is a subclass of the superclass VolumeManager
+- VolumeGroup is a subclass of the superclass VolumeManager
+- LogicalVolume is a subclass of the superclass VolumeManager
+- PhysicalVolume has a PhysicalHardDrive and a PhysicalHardDrive has a PhysicalVolume
+- VolumeGroup has multiple PhysicalVolume and a PhysicalVolume has a VolumeGroup
+- VolumeGroup has multiple LogicalVolumes and a LogicalVolume has a VolumeGroup
+Instance variables:
+- All subclasses of VolumeManager (PhysicalVolume, VolumeGroup, and LogicalVolume) inherit instance variables String name and String uuid (common attributes) from the VolumeManager superclass
+- In the PhysicalVolume subclass, PhysicalHardDrive physicalHardDrive, VolumeGroup volumeGroup, String volumeGroupName are the unique attributes of the class.
+- In the VolumeGroup subclass, ArrayList<PhysicalVolume> vgPhysicalVolume and ArrayList<LogicalVolume> vgLogicalVolumes are unique attributes of the class.
+- In the LogicalVolume subclass, String size and VolumeGroup volumeGroup are unique attributes of the class
+Methods:
+- All subclasses of VolumeManager (PhysicalVolume, VolumeGroup, and LogicalVolume) inherit all the public methods such as getUuid() and findHardDrive() from the VolumeManager superclass
+- Example of common behavior: the getUuid() method from the superclass VolumeManager is used in the dataInfo() and toString() method of the PhysicalVolume subclass, VolumeGroup subclass and LogicalVolume subclass
+- Example of using superclass method in subclass: the findHardDrive() method from the superclass VolumeManager is used in the PhysicalVolume subclass to find the PhysicalHardDrive that corresponds to the physical hard drive name given
+- Example of using superclass method in subclass: the findPhysicalVolume() method from the superclass VolumeManager is used in the VolumeGroup subclass to find the physicalVolume that corresponds to the physical volume name given
+- Example of using superclass method in subclass: the findVolumeGroup() method from the superclass VolumeManager is used in the LogicalVolume subclass to find the volume group that corresponds to the volume group name given
+- Methods like getPhysicalHardDrive() and setVolumeGroup() are unique behaviors of the PhysicalVolume subclass
+- Methods like getTotal() and getAvailable() are unique behaviors of the VolumeGroup subclass
+- Methods like setVolumeGroup() and getSize() are unique behaviors of the LogicalVolume subclass
+
+*** public class PhysicalHardDrive ***
+Instance variables:
+- String name;
+- String size;
+- PhysicalVolume physicalVolume;
+- String physicaVolumeName;
+Constructor:
+public PhysicalHardDrive(String name, String size)
+    sets instance variable name to parameter name and instance variable size to parameter size
+Methods:
+getters and setters for instance variables String name and String size
+public String toString()
+    returns a String in the format "name [size]"
+public String dataInfo()
+    returns a String in the format "name;size;physicalVolumeName"
+
+*** public class PhysicalVolume ***
+Instance variables:
+- PhysicalHardDrive physicalHardDrive;
+- VolumeGroup volumeGroup;
+- String volumeGroupName;
+Constructor:
+public PhysicalVolume(String name, String physicalHardDriveName)
+    passes name to the super constructor VolumeManager(String name)
+    sets physicalHardDrive to the physicalHardDrive that corresponds to the physicalHardDriveName (call the method findHardDrive() that finds the physicalHardDriveName in the arrayList of all the physicalHardDrives in the VolumeManager class)
+Methods:
+getters and setters for instance variables physicalHardDrive, volumeGroup, volumeGroupName
+public String toString()
+    returns a String in the format "[size] [name] [uuid]"
+public String dataInfo()
+    returns a String in the format "name;uuid;physicalHardDriveName;volumeGroupName"
+
+*** public class VolumeGroup ***
+Instance variables:
+- static ArrayList<PhysicalVolume> vgPhysicalVolume
+- static ArrayList<LogicalVolume> vgLogicalVolumes
+- int total; //sum of each physicalVolume size
+- int available; //the size left ot create logicalVolume
+Constructor:
+public VolumeGroup(String name, String physicalVolumeName)
+    passes name to the super constructor VolumeManager(String name)
+    finds and adds the PhysicalVolume by name and adds the PhysicalVolume to the vgPhysicalVolume arrayList
+
+//for data retrieval - did not save the physicalVolumeName b/c volumeGroup can have multiple physical volumes
+//set the vgPhysicalVolume by searching through all the created physical volume for the current vg name
+public VolumeGroup(String name)
+    passes name to the super constructor VolumeManager(String name)
+Methods:
+public int getTotal()
+    calculates the total size by iterating through and calculating the sum of the sizes of all the physicalVolumes associated with the volume group and returns it
+public int getAvailable()
+    calculates and returns the difference between the total and the sum of all the sizes of all the logicalVolumes associated with the volume group
+public void addPhysicalVolumeTovg(PhysicalVolume p)
+    adds p to the arrayList vgPhysicalVolume
+ddLogicalVolumeTovg(LogicalVolume l)
+    adds l to the arraylist vgLogicalVolumes
+
+*** public class LogicalVolume ***
+instance variables:
+- String size;
+- VolumeGroup volumeGroup;
+Constructor:
+public LogicalVolume(String name, String size, String volumeGroupName)
+        passes name to the super constructor VolumeManager(String name)
+        sets instance variable size to size
+        sets volumeGroup to the VolumeGroup that corresponds to the volumeGroupName (call the method findVolumeGroup() from the superclass)
+Methods:
+getter for instance variable size

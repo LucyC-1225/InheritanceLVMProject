@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 public class VolumeGroup extends VolumeManager{
     //set this while retrieving data. No need to save this
-    static ArrayList<PhysicalVolume> vgPhysicalVolume = new ArrayList<PhysicalVolume>(); //whenever a physical volume is created, it has to be added here
-    static ArrayList<LogicalVolume> vgLogicalVolumes = new ArrayList<LogicalVolume>(); //whenever a logical volume is created, it has to be added here
+    private static ArrayList<PhysicalVolume> vgPhysicalVolume = new ArrayList<PhysicalVolume>(); //whenever a physical volume is created, it has to be added here
+    private static ArrayList<LogicalVolume> vgLogicalVolumes = new ArrayList<LogicalVolume>(); //whenever a logical volume is created, it has to be added here
 
     private int total; //sum of each physicalVolume size
     private int available; //the size left ot create logicalVolume
@@ -17,10 +17,6 @@ public class VolumeGroup extends VolumeManager{
     //set the vgPhysicalVolume by searching through all the created physical volume for the current vg name
     public VolumeGroup(String name){
         super(name);
-    }
-
-    public static ArrayList<PhysicalVolume> getVgPhysicalVolume() {
-        return vgPhysicalVolume;
     }
 
 
