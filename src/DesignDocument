@@ -76,9 +76,14 @@ public void addPhysicalVolumeTovg(PhysicalVolume p)
     adds p to the arrayList vgPhysicalVolume
 ddLogicalVolumeTovg(LogicalVolume l)
     adds l to the arraylist vgLogicalVolumes
+public String toString()
+    returns a String in the format "name: [total size][size available][physicalVolumeNames][uuid]"
+
+public String dataInfo()
+    returns a String in the format "name;uuid"
 
 *** public class LogicalVolume ***
-instance variables:
+Instance variables:
 - String size;
 - VolumeGroup volumeGroup;
 Constructor:
@@ -87,4 +92,50 @@ public LogicalVolume(String name, String size, String volumeGroupName)
         sets instance variable size to size
         sets volumeGroup to the VolumeGroup that corresponds to the volumeGroupName (call the method findVolumeGroup() from the superclass)
 Methods:
-getter for instance variable size
+getter for instance variable size and volumeGroup
+setter for volumeGroup
+public String toString()
+    returns a String in the format "name: [size][volumeGroupName][uuid]"
+public String dataInfo()
+    returns a String in the format "name;uuid;size;volumeGroupName"
+
+*** public class VolumeManager ***
+Instance variables:
+- String name;
+- String uuid;
+- static ArrayList<PhysicalHardDrive> physicalHardDriveArrayList; //all physicalHardDrives created
+- static ArrayList<PhysicalVolume> physicalVolumeArrayList; //all physicalVolumes created
+- static ArrayList<VolumeGroup> volumeGroupArrayList; //all volumeGroups created
+- static ArrayList<LogicalVolume> logicalVolumeArrayList; //all logicalVolumes created
+Constructor:
+public VolumeManager(String name)
+    sets instance variable name to name and instance variable uuid to a randomly generated uuid
+Key Methods:
+getters and setters for name and uuid
+public PhysicalHardDrive findHardDrive(String name)
+    searches through the physicalHardDriveArrayList for the PhysicalHardDrive with name name and returns it if found
+public void addPhysicalHardDrive(PhysicalHardDrive p)
+    adds p to physicalHardDriveArrayList
+public PhysicalVolume findPhysicalVolume(String name)
+    searches through the physicalVolumeArrayList for the PhysicalVolume with name name and returns it if found
+public void addPhysicalVolume(PhysicalVolume p)
+    adds p to physicalVolumeArrayList
+public VolumeGroup findVolumeGroup(String name)
+    searches through the volumeGroupArrayList for the VolumeGroup with name name and returns it if found
+public void addVolumeGroup(VolumeGroup v)
+    adds v to volumeGroupArrayList
+all commands
+all userInput checks
+Example:
+public boolean hardDriveAlreadyExist(String name)
+    loops through physicalHardDriveArrayList and checks to see if any PhysicalHardDrive with name name exists
+public String getAllSavedData()
+    concatenates all the data of each PhysicalHardDrive, physicalVolume, VolumeGroup and LogicalVolume to a String by calling the dataInfo method of each class
+public void saveData()
+    prints the saved data to savedData.txt
+public void clearData() throws Exception
+    clears the savedData.txt file
+public boolean isDataFileEmpty()
+    checks if savedData.txt file is empty
+public void retrieveData() throws Exception
+    reads the data from savedData.txt and creates all the objects from this data
